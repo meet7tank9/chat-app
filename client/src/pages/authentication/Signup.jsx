@@ -1,19 +1,38 @@
 import React, { useState } from 'react'
 import { FaUser } from "react-icons/fa";
 import { FaKey } from "react-icons/fa";
-import { Link } from 'react-router-dom'
-
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom'
+import { registerUserThunk } from '../../store/slice/user/user.thunk.js';
+import { toast } from 'react-hot-toast';
 
 const Signup = () => {
-  const [signUp, setSigpUp] = useState({
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const [signUp, setSignUp] = useState({
     fullName: "",
     username: "",
     password: "",
-    confirmPassword: ""
+    gender: "male",
+    confirmPassword: "",
   })
 
   const handleInputChange = (e) => {
-    setSigpUp({ ...signUp, [e.target.name]: e.target.value })
+    // console.log(e.target.value);
+    setSignUp({ ...signUp, [e.target.name]: e.target.value })
+  }
+
+  const handleOnRegister = async (e) => {
+    // console.log("clicked");
+    if (signUp.confirmPassword != signUp.password) {
+      toast.error("Both password should be matched.")
+      return
+    }
+    const response = await dispatch(registerUserThunk(signUp))
+    if(response.payload?.success){
+      navigate("/login")
+    }
   }
 
   return (
@@ -37,7 +56,15 @@ const Signup = () => {
             <FaKey />
             <input type="password" name='confirmPassword' className="grow" placeholder='Confirm Password' onChange={handleInputChange} />
           </label>
-          <button className="btn btn-outline btn-primary">Signup</button>
+          <label htmlFor="" className='flex gap-5'>
+            <div className='flex gap-2'>
+              <input type="radio" name="gender" className="radio radio-primary" defaultChecked value="male" onChange={handleInputChange} />Male
+            </div>
+            <div className='flex gap-2'>
+              <input type="radio" name="gender" className="radio radio-primary" value="female" onChange={handleInputChange} />Female
+            </div>
+          </label>
+          <button className="btn btn-outline btn-primary" onClick={handleOnRegister}>Signup</button>
 
           <p className=''>Already have an account? <Link to={'/login'} className='text-blue-400 underline'>Login</Link></p>
         </div>

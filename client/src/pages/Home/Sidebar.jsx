@@ -1,8 +1,23 @@
 import React from 'react'
 import { FaSearch } from "react-icons/fa";
 import User from "./User"
+import { logoutUserThunk } from '../../store/slice/user/user.thunk.js';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    const handleLogout = async () => {
+        const response = await dispatch(logoutUserThunk({}))
+        // console.log(response);
+        if (response.payload?.success) {
+            navigate("/login")
+        }
+    }
+
     return (
         <div className='max-w-[23rem] w-full h-screen flex flex-col border-r border-r-slate-600'>
             <div className='flex items-center justify-start min-h-[3rem] px-4 text-xl font-semibold shadow-sm shadow-slate-600'>
@@ -46,7 +61,7 @@ const Sidebar = () => {
                         <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
                     </div>
                 </div>
-                <button className="btn btn-outline btn-primary btn-sm px-4">Logout</button>
+                <button className="btn btn-outline btn-primary btn-sm px-4" onClick={handleLogout}>Logout</button>
             </div>
         </div>
     )

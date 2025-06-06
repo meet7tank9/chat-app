@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaUser } from "react-icons/fa";
 import { FaKey } from "react-icons/fa";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
 import { registerUserThunk } from '../../store/slice/user/user.thunk.js';
 import { toast } from 'react-hot-toast';
@@ -10,6 +10,8 @@ const Signup = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const { isAuthenticated } = useSelector(state => state.userReducer)
+
   const [signUp, setSignUp] = useState({
     fullName: "",
     username: "",
@@ -17,6 +19,12 @@ const Signup = () => {
     gender: "male",
     confirmPassword: "",
   })
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/")
+    }
+  }, [isAuthenticated])
 
   const handleInputChange = (e) => {
     // console.log(e.target.value);
@@ -30,7 +38,7 @@ const Signup = () => {
       return
     }
     const response = await dispatch(registerUserThunk(signUp))
-    if(response.payload?.success){
+    if (response.payload?.success) {
       navigate("/login")
     }
   }

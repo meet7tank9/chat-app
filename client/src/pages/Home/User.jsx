@@ -1,19 +1,30 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedUser } from '../../store/slice/user/user.slice';
 
-const User = () => {
+const User = ({ user }) => {
+
+    const dispatch = useDispatch()
+
+    const { selectedUser } = useSelector(state => state?.userReducer)
+
+    const handleOnSelectedUser = () => {
+        dispatch(setSelectedUser(user))
+    }
+
     return (
-        <div className='flex gap-5 items-center'>
+        <div className={`flex gap-5 py-2 ps-3 rounded-lg items-center hover:bg-slate-800 cursor-pointer transition-all duration-200 ${user?._id === selectedUser?._id && `bg-slate-900`}`} onClick={handleOnSelectedUser}>
             <div className="avatar online">
                 <div className="w-[50px] rounded-full">
-                    <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <img src={user?.avatar} />
                 </div>
             </div>
             <div className='flex flex-col gap-1'>
                 <div className='line-clamp-1'>
-                    Full Name
+                    {user?.fullName}
                 </div>
                 <div className='text-sm'>
-                    username
+                    {user?.username}
                 </div>
             </div>
         </div>

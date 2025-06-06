@@ -27,15 +27,35 @@ export const registerUserThunk = createAsyncThunk('users/register', async ({ ful
     }
 })
 
-export const logoutUserThunk = createAsyncThunk("user/logout", async ({}, { rejectWithValue }) => {
+export const logoutUserThunk = createAsyncThunk("user/logout", async ({ }, { rejectWithValue }) => {
     try {
         const response = await axiosInstance.post("/user/logout", {})
         toast.success("Logout success")
-
+        
         return response?.data
     } catch (error) {
         const errorMessage = error.response?.data?.message || "Logout failed";
         toast.error(errorMessage)
+        return rejectWithValue(errorMessage)
+    }
+})
+
+export const getUserProfileThunk = createAsyncThunk("user/profile", async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get("/user/get-profile")
+        return response?.data
+    } catch (error) {
+        const errorMessge = error.response?.data?.message || ""
+        return rejectWithValue(errorMessge)
+    }
+})
+
+export const getOtherUsersThunk = createAsyncThunk("user/other-users", async (_, { rejectWithValue }) => {
+    try {
+        const response = await axiosInstance.get("/user/get-other-users")
+        return response?.data
+    } catch (error) {
+        const errorMessage = error.resposne?.data?.message || ""
         return rejectWithValue(errorMessage)
     }
 })

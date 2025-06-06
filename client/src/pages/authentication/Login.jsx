@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaUser } from "react-icons/fa";
 import { FaKey } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom'
@@ -10,10 +10,18 @@ const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  const { isAuthenticated } = useSelector(state => state.userReducer)
+
   const [loginData, setLoginData] = useState({
     username: "",
     password: ""
   })
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/")
+    }
+  }, [isAuthenticated])
 
   const handleInputChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })

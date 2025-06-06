@@ -1,47 +1,54 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import User from './User'
 import Message from './Message'
-import { AiOutlineSend } from "react-icons/ai";
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserMessagesThunk } from '../../store/slice/message/message.thunk';
+import SendMessage from './SendMessage';
 
 const MessageContainer = () => {
-  return (
-    <div className='w-full h-screen flex flex-col'>
-      <div className='p-4 border-b border-b-slate-500 border-l border-l-slate-500 rounded-bl-xl shadow-md shadow-slate-700'>
-        <User />
-      </div>
-      <div className='h-full p-4 overflow-y-auto'>
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-        <Message />
-      </div>
-      <div className='w-full p-3 flex items-center gap-3'>
-        <input
-          type="text"
-          placeholder="Type a message"
-          className="input input-bordered input-primary w-full h-[3rem] min-w-xs" />
+  const { selectedUser } = useSelector(state => state?.userReducer)
+  const { messages } = useSelector(state => state?.messageReducer)
 
-        <button className="btn btn-square btn-outline h-[3rem] w-[3rem]">
-          <AiOutlineSend />
-        </button>
-      </div>
-    </div>
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+
+    const fetchMessages = async () => {
+      const response = await dispatch(getUserMessagesThunk({ otherParticipantId: selectedUser?._id.toString() }))
+    }
+
+    if (selectedUser)
+      fetchMessages()
+    else {
+      return
+    }
+
+  }, [selectedUser])
+
+  return (
+    <>
+      {
+        !selectedUser
+          ? (
+            <div className='flex flex-col items-center justify-center w-full text-5xl font-semibold text-slate-700'>Please select a chatter</div>
+          )
+          : (
+
+            <div className='w-full h-screen flex flex-col'>
+              <div className='p-4 border-b border-b-slate-500 border-l border-l-slate-500 rounded-bl-xl shadow-md shadow-slate-700'>
+                <User user={selectedUser} />
+              </div>
+              <div className='h-full p-4 overflow-y-auto'>
+                {
+                  messages?.length > 0 && messages?.map((message) => {
+                    return <Message key={message?._id} messageItem={message} />
+                  })
+                }
+              </div>
+              <SendMessage />
+            </div >
+          )}
+    </>
   )
 }
 

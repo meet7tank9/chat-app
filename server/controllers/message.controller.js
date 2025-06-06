@@ -45,7 +45,7 @@ const getMessages = asyncHandler(async (req, res, next) => {
     }
 
     const con = await Conversation.find({ participants: { $all: [myId, otherParticipantId] } }).populate(
-        { path: "messages", options: { sort: { createdAt: - 1 } } })
+        { path: "messages" })
 
     res.status(200).json({
         success: true,

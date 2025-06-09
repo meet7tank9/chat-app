@@ -1,3 +1,4 @@
+import { app, server } from "./socket/socket.js"
 import express from "express"
 import "dotenv/config"
 import userRoute from "./routes/user.route.js"
@@ -7,14 +8,12 @@ import cookieParser from "cookie-parser"
 import { errorMiddleware } from "./middlewares/error.middleware.js"
 import cors from "cors"
 
-const app = express()
+// const app = express()
 
 app.use(cors({
-
     origin: "http://localhost:5173",
     credentials: true
-})
-)
+}))
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -27,6 +26,6 @@ app.use(errorMiddleware)
 
 connectDB()
 
-app.listen(process.env.PORT || 3000, () => {
+server.listen(process.env.PORT || 3000, () => {
     console.log(`Server started at ${process.env.PORT}`);
 })

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaSearch } from "react-icons/fa";
 import User from "./User"
 import { getOtherUsersThunk, logoutUserThunk } from '../../store/slice/user/user.thunk.js';
@@ -6,17 +6,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
-
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
+    const [searchValue, setSearchValue] = useState("")
+    const [users, setUsers] = useState([])
     const { otherUsers, userProfile } = useSelector((state) => state.userReducer)
+
+
+    useEffect(() => {
+        if (!searchValue) {
+            setUsers(otherUsers)
+        }
+        else {
+            setUsers(otherUsers.filter(user => user.username.includes(searchValue.toLowerCase())))
+        }
+
+    }, [searchValue, otherUsers])
 
     useEffect(() => {
         const fetchUsers = async () => {
             const response = await dispatch(getOtherUsersThunk())
             // console.log(response);
-            // return
         }
         fetchUsers()
     }, [])
@@ -36,13 +47,13 @@ const Sidebar = () => {
             </div>
             <div className='p-4'>
                 <label className="input input-bordered flex items-center gap-2">
-                    <input type="text" className="grow" placeholder="Search" />
+                    <input type="text" className="grow" placeholder="Search" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
                     <FaSearch />
                 </label>
             </div>
             <div className='h-full flex flex-col overflow-y-auto p-4 '>
                 {
-                    otherUsers?.map((user, index) => {
+                    users?.map((user, index) => {
                         return <span key={index}><User user={user} /></span>
                     })
                 }
